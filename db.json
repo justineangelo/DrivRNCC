@@ -29,8 +29,8 @@
       "status": "pending"
     }
   ],
-  "currentLocation": {
-    "latitude": 14.614406139110221,
-    "longitude": 120.98382688850407
+  "profile": {
+    "name": "Agent 007",
+    "rating": 4.88
   }
 }
