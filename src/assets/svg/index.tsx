@@ -8,6 +8,7 @@ import moreIC from "./more_ic";
 import earningsIC from "./earnings_ic";
 import starIC from "./star_ic";
 import userIC from "./user_ic";
+import passengerIC from "./passenger_ic";
 
 export default {
   powerIC,
@@ -20,4 +21,5 @@ export default {
   earningsIC,
   starIC,
   userIC,
+  passengerIC,
 };

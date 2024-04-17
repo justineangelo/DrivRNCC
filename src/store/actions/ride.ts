@@ -1,5 +1,5 @@
-import rideSlice from "store/reducers/rideSlice";
+import rideSlice, { fetchRidesNearMe } from "store/reducers/rideSlice";
 
 const rideActions = rideSlice.actions;
 
-export default rideActions;
+export default { ...rideActions, fetchRidesNearMe };

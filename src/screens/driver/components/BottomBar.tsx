@@ -1,5 +1,5 @@
 import React, { Component, ReactNode } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import ViewComponent from "components/ViewComponent";
 import OnlineButton from "./OnlineButton";
 import DummyNavigationBar from "./DummyNavigationBar";

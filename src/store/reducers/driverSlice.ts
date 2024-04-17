@@ -1,10 +1,15 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import api from "api";
+import { Location, Profile } from "interfaces";
+
+export const fetchProfile = createAsyncThunk<Profile>("driver/fetchProfile", async () => {
+  return await api.fetchProfile();
+});
 
 export interface DriverState {
-  firstName?: string;
-  lastName?: string;
-  rating?: number;
-  isOnline?: boolean;
+  isLoading?: boolean;
+  profile?: Profile;
+  location?: Location;
 }
 
 const initialState: DriverState = {};
@@ -13,20 +18,29 @@ const driverSlice = createSlice({
   name: "driver",
   initialState,
   reducers: {
-    setData: (state, action: PayloadAction<DriverState>) => {
-      state = action.payload;
+    setCurrentLocation: (state, action) => {
+      state.location = action.payload;
     },
   },
   selectors: {
     selectRating: (state) => {
-      return state.rating;
+      return state.profile?.rating;
     },
     selectName: (state) => {
-      if (state.firstName && state.lastName) {
-        return state.firstName + state.lastName;
-      }
-      return undefined;
+      return state.profile?.name;
     },
+    selectCurrentLocation: (state) => {
+      return state.location;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchProfile.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(fetchProfile.fulfilled, (state, action) => {
+      state.profile = action.payload;
+      state.isLoading = false;
+    });
   },
 });
 
