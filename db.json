@@ -3,6 +3,7 @@
     {
       "id": "bfaa4874-6139-4031-8cfc-d7010723d81d",
       "userId": "cae66b70-c1a7-4ca7-96bd-69abbcaa2f6d",
+      "userRating": 4.5,
       "driverId": null,
       "pickupLocation": {
         "latitude": 14.629525168586534,
@@ -17,6 +18,7 @@
     {
       "id": "77ffda59-9750-492e-8e9d-d8f3d0a098fa",
       "userId": "d6eb6704-7d36-4a93-b97a-2190c41ca683",
+      "userRating": 4.78,
       "driverId": null,
       "pickupLocation": {
         "latitude": 14.61148889556677,
@@ -31,6 +33,7 @@
     {
       "id": "d3e0dad6-c9d8-4dd9-883e-ab0beb59f23f",
       "userId": "1f388942-11d0-4b31-9e7b-c6ff1cd811bf",
+      "userRating": 4.31,
       "driverId": null,
       "pickupLocation": {
         "latitude": 14.593653827376734,
