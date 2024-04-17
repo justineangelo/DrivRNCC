@@ -1,0 +1,18 @@
+{
+  "rides": [
+    {
+      "id": "bfaa4874-6139-4031-8cfc-d7010723d81d",
+      "userId": "cae66b70-c1a7-4ca7-96bd-69abbcaa2f6d",
+      "driverId": null,
+      "pickupLocation": {
+        "latitude": 14.629525168586534,
+        "longitude": 120.98266693338446
+      },
+      "destination": {
+        "latitude": 14.630409524585163,
+        "longitude": 120.99647299480539
+      },
+      "status": "pending"
+    }
+  ]
+}
