@@ -25,7 +25,7 @@ class RideProgressView extends Component<RideProgressViewProps> {
         <ViewComponent style={{ flex: 1, alignItems: "center" }}>
           <ViewComponent style={styles.infoContainer}>
             <Text style={{ ...styles.text, flex: 1, textAlign: "right" }}>
-              {ride?.pickupToDestinationDurationReadable}
+              {ride?.driverToPickupDurationReadable}
             </Text>
             <SVG
               style={{ margin: 8 }}
@@ -35,7 +35,7 @@ class RideProgressView extends Component<RideProgressViewProps> {
               fill={"#30e54e"}
             />
             <Text style={{ ...styles.text, flex: 1, textAlign: "left" }}>
-              {ride?.pickupToDestinationDistanceReadable}
+              {ride?.driverToPickupDistanceReadable}
             </Text>
           </ViewComponent>
           <Text style={styles.rideText}>
