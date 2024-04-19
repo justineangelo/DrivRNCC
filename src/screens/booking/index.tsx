@@ -33,7 +33,7 @@ class BookingScreen extends Component<BookingScreenProps, BookingScreenState> {
     const { ride } = this.state;
 
     return (
-      <BaseView style={styles.container} useSafeArea={true}>
+      <BaseView style={styles.container}>
         <ViewComponent style={{ flex: 1 }} />
         <ViewComponent style={styles.popupContainer}>
           <Text style={styles.priceText}>

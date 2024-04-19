@@ -33,7 +33,7 @@ class BaseView extends Component<BaseViewProps> {
         onLayout={onLayout}
       >
         {useSafeArea ? (
-          <SafeAreaView style={{ flex: 1 }}>
+          <SafeAreaView style={{ flex: 1 }} forceInset={{ top: "always" }}>
             {headerContent}
             {children}
           </SafeAreaView>

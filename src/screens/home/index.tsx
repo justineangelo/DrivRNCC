@@ -83,7 +83,7 @@ class HomeScreen extends Component<HomeScreenProps> {
     } = this.props;
 
     return (
-      <BaseView style={styles.container} useSafeArea={true}>
+      <BaseView style={styles.container}>
         <ViewComponent style={{ flex: 1 }}>
           <MapView
             style={{ flex: 1 }}
