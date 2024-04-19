@@ -63,10 +63,11 @@ class HomeScreen extends Component<HomeScreenProps> {
     const { rideError, driverError } = this.props;
 
     if (prevProps.rideError != rideError && rideError) {
-      Toast.show(rideError, { duration: Toast.durations.LONG });
-    }
-    if (prevProps.driverError != driverError && driverError) {
-      Toast.show(driverError, { duration: Toast.durations.LONG });
+      this.toast && Toast.hide(this.toast);
+      this.toast = Toast.show(rideError, { duration: Toast.durations.LONG });
+    } else if (prevProps.driverError != driverError && driverError) {
+      this.toast && Toast.hide(this.toast);
+      this.toast = Toast.show(driverError, { duration: Toast.durations.LONG });
     }
   }
 
