@@ -1,28 +1,42 @@
 import React, { Component } from "react";
 import { StyleSheet, Text } from "react-native";
+import * as Progress from "react-native-progress";
 import ViewComponent from "components/ViewComponent";
 import SVG from "components/SVG";
 import svg from "assets/svg";
 
-interface Props {
+interface NavigationBarProps {
+  isLoading?: boolean;
   autoAcceptOnPress?: () => void;
 }
 
-class BottomBar extends Component<Props> {
+class NavigationBar extends Component<NavigationBarProps> {
   render(): React.ReactNode {
-    const { autoAcceptOnPress } = this.props;
+    const { isLoading, autoAcceptOnPress } = this.props;
 
     return (
       <ViewComponent style={styles.container}>
-        <DummyButton title="Service" svg={svg.carIC} />
-        <DummyButton title="My Destination" svg={svg.pinIC} />
-        <DummyButton title="Diagnosis" svg={svg.settingsIC} />
-        <DummyButton
-          title="Auto Accept"
-          svg={svg.autoIC}
-          onPress={autoAcceptOnPress}
-        />
-        <DummyButton title="More" svg={svg.moreIC} />
+        {isLoading ? (
+          <Progress.Bar
+            height={2}
+            width={null}
+            borderWidth={0}
+            indeterminate={true}
+          />
+        ) : (
+          <ViewComponent style={{ height: 2 }} />
+        )}
+        <ViewComponent style={styles.tab}>
+          <DummyButton title="Service" svg={svg.carIC} />
+          <DummyButton title="My Destination" svg={svg.pinIC} />
+          <DummyButton title="Diagnosis" svg={svg.settingsIC} />
+          <DummyButton
+            title="Auto Accept"
+            svg={svg.autoIC}
+            onPress={autoAcceptOnPress}
+          />
+          <DummyButton title="More" svg={svg.moreIC} />
+        </ViewComponent>
       </ViewComponent>
     );
   }
@@ -30,11 +44,15 @@ class BottomBar extends Component<Props> {
 
 const DummyButton = (props: {
   title: string;
+  enabled?: boolean;
   svg: { element: JSX.Element; viewBox: string };
   onPress?: () => void;
 }) => {
   return (
-    <ViewComponent style={styles.button} onPress={props.onPress}>
+    <ViewComponent
+      style={{ ...styles.button, opacity: props.enabled ? 1 : 0.5 }}
+      onPress={props.onPress}
+    >
       <ViewComponent style={styles.iconContainer}>
         <SVG svg={props.svg} fill={"black"} height={20} width={20} />
       </ViewComponent>
@@ -45,21 +63,22 @@ const DummyButton = (props: {
   );
 };
 
-export default BottomBar;
-
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    paddingVertical: 10,
-    justifyContent: "space-evenly",
-    marginTop: 10,
     width: "100%",
+    marginTop: 10,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "black",
     shadowOpacity: 0.2,
     shadowOffset: { width: 2, height: 2 },
     shadowRadius: 5,
+    overflow: "hidden",
+  },
+  tab: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingVertical: 10,
   },
   button: {
     flex: 1,
@@ -86,3 +105,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default NavigationBar;

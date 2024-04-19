@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
 import driverSlice from "./driverSlice";
-import rideSlice from "./rideSlice";
+import homeSlice from "./homeSlice";
 
-export default combineReducers({ driver: driverSlice.reducer, ride: rideSlice.reducer });
+export default combineReducers({ driver: driverSlice.reducer, home: homeSlice.reducer });

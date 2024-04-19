@@ -14,7 +14,6 @@ import svg from "assets/svg";
 interface OnlineButtonProps {
   style?: ViewStyle;
   isOnline?: boolean;
-  isLoading?: boolean;
   onPress?: () => void;
 }
 
@@ -30,6 +29,10 @@ class OnlineButton extends Component<OnlineButtonProps, OnlineButtonState> {
     this.state = { currentX: 0, translateX: new Animated.Value(0) };
   }
 
+  componentDidMount(): void {
+    this.animate();
+  }
+
   componentDidUpdate(prevProps: Readonly<OnlineButtonProps>): void {
     if (prevProps.isOnline != this.props.isOnline) {
       this.animate();
@@ -37,7 +40,7 @@ class OnlineButton extends Component<OnlineButtonProps, OnlineButtonState> {
   }
 
   render(): ReactNode {
-    const { style, isLoading, isOnline, onPress } = this.props;
+    const { style, isOnline, onPress } = this.props;
     const { translateX } = this.state;
 
     return (
@@ -53,14 +56,8 @@ class OnlineButton extends Component<OnlineButtonProps, OnlineButtonState> {
           }}
           onPress={onPress}
         >
-          {isLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <>
-              <SVG svg={svg.powerIC} {...styles.icon} fill={"white"} />
-              {isOnline ? null : <Text style={styles.title}>Go Online </Text>}
-            </>
-          )}
+          <SVG svg={svg.powerIC} {...styles.icon} fill={"white"} />
+          {isOnline ? null : <Text style={styles.title}>Go Online </Text>}
         </ViewComponent>
       </Animated.View>
     );
@@ -69,7 +66,7 @@ class OnlineButton extends Component<OnlineButtonProps, OnlineButtonState> {
   private onLayout = (event: LayoutChangeEvent) => {
     const { layout } = event.nativeEvent;
 
-    this.setState({ currentX: layout.x });
+    this.setState({ currentX: layout.x + 36 });
   };
 
   private animate = () => {

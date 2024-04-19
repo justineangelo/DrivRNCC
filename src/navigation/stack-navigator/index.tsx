@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import DriverScreen from "screens/driver";
+import HomeScreen from "screens/home";
 import BookingScreen from "screens/booking";
 
 const Stack = createStackNavigator();
@@ -11,7 +11,7 @@ export default () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="DriverScreen" component={DriverScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen
         name="BookingScreen"
         component={BookingScreen}

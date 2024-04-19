@@ -4,12 +4,12 @@ import SVG from "components/SVG";
 import ViewComponent from "components/ViewComponent";
 import svg from "assets/svg";
 
-interface Props {
+interface RatingProps {
   style?: ViewStyle;
   rating?: number;
 }
 
-class Rating extends Component<Props> {
+class Rating extends Component<RatingProps> {
   render(): ReactNode {
     const { style, rating } = this.props;
 

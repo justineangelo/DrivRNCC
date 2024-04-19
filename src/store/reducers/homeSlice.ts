@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction, ThunkAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "api";
-import { Location, ResponseError, Ride } from "interfaces";
-import ride from "store/actions/ride";
+import { Location, MapRegion, ResponseError, Ride, RideStatus } from "interfaces";
+import { calculateFareFromDistance } from "utils";
 
-export const fetchRidesNearMe = createAsyncThunk<Ride[] | ResponseError, Location>("ride/fetchRidesNearMe", async (location, thunkAPI) => {
+export const fetchRidesNearMe = createAsyncThunk<Ride[] | ResponseError, Location>("home/fetchRidesNearMe", async (location, thunkAPI) => {
   const rides = await api.fetchRidesNearMe(location);
   const pickupLocations = rides.map((r) => r.pickupLocation!);
   const destinationLocations = rides.map((r) => r.destination!);
@@ -20,39 +20,70 @@ export const fetchRidesNearMe = createAsyncThunk<Ride[] | ResponseError, Locatio
     r.pickupToDestinationDistanceReadable = pickupToDestination.rows![i].elements![i].distance!.text;
     r.pickupToDestinationDuration = pickupToDestination.rows![i].elements![i].duration!.value;
     r.pickupToDestinationDurationReadable = pickupToDestination.rows![i].elements![i].duration!.text;
+    if (r.pickupToDestinationDistance) {
+      r.estimatedFare = calculateFareFromDistance(r.pickupToDestinationDistance / 1_000);
+    }
   });
   return rides;
 });
 
-export interface RideState {
+export interface HomeState {
   isOnline?: boolean;
-  list?: Ride[];
   isLoading?: boolean;
+  mapRegion?: MapRegion;
+  rides?: Ride[];
   error?: string;
 }
 
-const initialState: RideState = {};
+const initialState: HomeState = {};
 
-const requestSlice = createSlice({
-  name: "ride",
+const homeSlice = createSlice({
+  name: "home",
   initialState,
   reducers: {
     setIsOnline: (state, action: PayloadAction<boolean>) => {
       state.isOnline = action.payload;
     },
+    setMapRegion: (state, action: PayloadAction<MapRegion>) => {
+      state.mapRegion = action.payload;
+    },
     setRides: (state, action: PayloadAction<Ride[]>) => {
-      state.list = action.payload;
+      state.rides = action.payload;
+    },
+    setRideStatus: (state, action: PayloadAction<{ id: string; status: RideStatus; driverId?: string }>) => {
+      const index = state.rides?.findIndex((ride) => ride.id === action.payload.id);
+
+      if (index != undefined) {
+        state.rides![index].status = action.payload.status;
+        if (action.payload.status === "accepted" && action.payload.driverId) {
+          state.rides![index].driverId = action.payload.driverId;
+        }
+      }
     },
   },
   selectors: {
     selectIsOnline: (state) => {
       return state.isOnline;
     },
-    selectPendingRides: (state) => {
-      return state.list?.filter((r) => r.status === "pending");
+    selectMapRegion: (state) => {
+      return state.mapRegion;
+    },
+    selectAvailableRides: (state, driverId?: string) => {
+      if (!state.isLoading && state.isOnline) {
+        const acceptedRide = driverId && state.rides?.find((ride) => ride.status === "accepted" && ride.driverId === driverId);
+
+        if (acceptedRide) {
+          return [acceptedRide];
+        }
+        return state.rides?.filter((r) => r.status === "pending");
+      }
+      return undefined;
     },
     selectIsLoading: (state) => {
       return state.isLoading;
+    },
+    selectRideById: (state, rideId?: string) => {
+      return state.rides?.find((ride) => ride.id == rideId);
     },
   },
   extraReducers: (builder) => {
@@ -61,7 +92,7 @@ const requestSlice = createSlice({
     });
     builder.addCase(fetchRidesNearMe.fulfilled, (state, action) => {
       if (action.payload instanceof Array) {
-        state.list = action.payload;
+        state.rides = action.payload;
       } else {
         state.error = action.payload.data;
       }
@@ -74,4 +105,4 @@ const requestSlice = createSlice({
   },
 });
 
-export default requestSlice;
+export default homeSlice;

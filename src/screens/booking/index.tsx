@@ -1,84 +1,90 @@
 import React, { Component, ReactNode } from "react";
 import { StyleSheet, Text } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { connect } from "react-redux";
 import BaseView from "components/BaseView";
 import ViewComponent from "components/ViewComponent";
 import SVG from "components/SVG";
 import svg from "assets/svg";
+import { NavigationProps, Ride } from "interfaces";
+import TimerClose from "./components/TimerClose";
+import { RootState } from "store";
+import homeActions from "store/actions/home";
+import driverSelectors from "store/selectors/driver";
+import driverActions from "store/actions/driver";
 
-interface BookingScreenProps extends NavigationProps {}
+interface BookingScreenProps extends NavigationProps {
+  driverId?: string;
+  setRideStatus: typeof homeActions.setRideStatus;
+  setSelectedRideId: typeof driverActions.setSelectedRideId;
+}
 
-class BookingScreen extends Component<BookingScreenProps> {
+interface BookingScreenState {
+  ride?: Ride;
+}
+
+class BookingScreen extends Component<BookingScreenProps, BookingScreenState> {
+  constructor(props: BookingScreenProps) {
+    super(props);
+
+    this.state = { ride: props.route?.params?.data };
+  }
+
   render(): ReactNode {
+    const { ride } = this.state;
+
     return (
-      <BaseView style={styles.container}>
-        <ViewComponent
-          style={{
-            position: "absolute",
-            height: "150%",
-            width: "100%",
-            backgroundColor: "black",
-            opacity: 0.5,
-          }}
-          onPress={this.closeOnPress}
-        />
-        <ViewComponent style={{ flex: 1 }} disabled={true} />
+      <BaseView style={styles.container} useSafeArea={true}>
+        <ViewComponent style={{ flex: 1 }} />
         <ViewComponent style={styles.popupContainer}>
-          <Entypo
-            style={{ position: "absolute", right: 10, top: 10, zIndex: 999 }}
-            name="circle-with-cross"
-            size={30}
+          <Text style={styles.priceText}>
+            ₱{ride?.estimatedFare?.toFixed(2)}
+          </Text>
+          <TimerClose
+            style={styles.closeButton}
+            timeoutMS={15_000}
             onPress={this.closeOnPress}
           />
-          <ViewComponent style={styles.userContainer}>
-            <ViewComponent style={styles.imageContainer}>
-              <SVG svg={svg.userIC} fill={"black"} height={60} width={60} />
-            </ViewComponent>
-            <ViewComponent
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <SVG svg={svg.starIC} fill={"gold"} height={20} width={20} />
-              <Text style={styles.ratingText}>{"5.00"}</Text>
-            </ViewComponent>
-          </ViewComponent>
-          <ViewComponent style={{ alignItems: "center", marginBottom: 16 }}>
-            <Text style={{ fontSize: 30, fontWeight: "bold" }}>$14.55</Text>
-          </ViewComponent>
-          <ViewComponent style={{ flexDirection: "row", marginBottom: 16 }}>
-            <ViewComponent style={styles.centerContainer}>
-              <Text>4KM</Text>
-            </ViewComponent>
-            <ViewComponent style={styles.centerContainer}>
-              <Text>CASH</Text>
-            </ViewComponent>
-          </ViewComponent>
           <ViewComponent
-            style={{
-              marginBottom: 16,
-              backgroundColor: "#FBFAF4",
-              borderRadius: 10,
-            }}
+            style={{ ...styles.ratingContainer, marginBottom: 20 }}
           >
-            <ViewComponent style={{ justifyContent: "center", padding: 8 }}>
-              <Text style={styles.locationText}>
-                73 Rd 1 Extn. San Miguel Heights, Marulas Valenzuela City
-              </Text>
-            </ViewComponent>
-            <Entypo
-              style={{ alignSelf: "center" }}
-              name="chevron-down"
-              size={20}
-            />
-            <ViewComponent
-              style={{
-                backgroundColor: "white",
-                justifyContent: "center",
-                padding: 8,
-              }}
-            >
-              <Text style={styles.locationText}>
-                73 Rd 1 Extn. San Miguel Heights, Marulas Valenzuela City
-              </Text>
+            <SVG svg={svg.starIC} fill={"black"} height={16} width={16} />
+            <Text style={styles.ratingText}>{ride?.userRating}</Text>
+          </ViewComponent>
+          <ViewComponent style={{ flexDirection: "row" }}>
+            <ViewComponent style={{ width: 24 }} />
+            <ViewComponent style={{ flex: 1 }}>
+              <ViewComponent>
+                <Text style={{ ...styles.contentText, marginBottom: 4 }}>
+                  {ride?.driverToPickupDurationReadable} (
+                  {ride?.driverToPickupDistanceReadable}) away
+                </Text>
+                <Text style={{ position: "absolute", left: -18, fontSize: 30 }}>
+                  •
+                </Text>
+                <Text
+                  style={{ ...styles.contentText, marginBottom: 16 }}
+                  numberOfLines={2}
+                  ellipsizeMode="middle"
+                >
+                  {ride?.pickupLocation?.name}
+                </Text>
+              </ViewComponent>
+              <ViewComponent>
+                <Text style={{ ...styles.contentText, marginBottom: 4 }}>
+                  {ride?.pickupToDestinationDurationReadable} (
+                  {ride?.pickupToDestinationDistanceReadable}) trip
+                </Text>
+                <Text style={{ position: "absolute", left: -18, fontSize: 30 }}>
+                  •
+                </Text>
+                <Text
+                  style={{ ...styles.contentText, marginBottom: 20 }}
+                  numberOfLines={2}
+                  ellipsizeMode="middle"
+                >
+                  {ride?.destination?.name}
+                </Text>
+              </ViewComponent>
             </ViewComponent>
           </ViewComponent>
           <ViewComponent
@@ -88,79 +94,75 @@ class BookingScreen extends Component<BookingScreenProps> {
             <Text style={styles.acceptText}>Accept</Text>
           </ViewComponent>
         </ViewComponent>
-        <ViewComponent style={{ flex: 1 }} disabled={true} />
       </BaseView>
     );
   }
 
   private closeOnPress = () => {
+    const { driverId } = this.props;
+    const { ride } = this.state;
+
+    if (ride?.id) {
+      this.props.setRideStatus({ id: ride.id, status: "declined", driverId });
+    }
+    this.props.setSelectedRideId(undefined);
     this.props.navigation?.goBack();
   };
 
   private acceptOnPress = () => {
+    const { driverId } = this.props;
+    const { ride } = this.state;
+
+    if (ride?.id) {
+      this.props.setRideStatus({ id: ride.id, status: "accepted", driverId });
+    }
     this.props.navigation?.goBack();
-    console.log("accept job");
   };
 }
 
-export default BookingScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
+  container: { flex: 1 },
   popupContainer: {
-    padding: 16,
-    width: "90%",
-    backgroundColor: "white",
     borderRadius: 10,
-    alignSelf: "center",
-    shadowColor: "black",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 5, height: 5 },
-    shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: "#30e54e",
+    backgroundColor: "white",
+    margin: 16,
+    padding: 12,
   },
-  userContainer: {
+  closeButton: {
+    position: "absolute",
+    right: 0,
+    margin: 16,
+    height: 40,
+    width: 40,
+  },
+  contentText: { color: "black", fontSize: 14, fontWeight: "500" },
+  priceText: {
+    color: "black",
+    fontSize: 40,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 5,
   },
-  imageContainer: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    backgroundColor: "#F4FBFB",
-    shadowColor: "black",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 2, height: 2 },
-    shadowRadius: 5,
-    marginRight: 8,
-  },
-  nameText: {
-    color: "black",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   ratingText: {
     color: "black",
     fontSize: 14,
-    fontWeight: "500",
-    textTransform: "uppercase",
-  },
-  locationText: {
-    color: "black",
-    fontSize: 14,
     fontWeight: "bold",
-    textAlign: "center",
+    marginLeft: 4,
   },
   acceptButton: {
     height: 48,
     backgroundColor: "#30e54e",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 5,
+    borderRadius: 8,
   },
   acceptText: {
     color: "white",
@@ -168,3 +170,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    driverId: driverSelectors.selectDriverId(state),
+  };
+};
+
+const mapDispatchToProps = {
+  setRideStatus: homeActions.setRideStatus,
+  setSelectedRideId: driverActions.setSelectedRideId,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookingScreen);

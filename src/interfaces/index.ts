@@ -1,4 +1,4 @@
-import ride from "store/actions/ride";
+import ride from "store/actions/home";
 
 export type NavigationUnsubscriber = () => void;
 
@@ -19,7 +19,14 @@ export interface NavigationProps {
 
 export type UnitType = "metric" | "imperial";
 
-export type RideStatus = "pending" | "accepted" | "declined" | "started" | "picked-up" | "dropped-off";
+export type RideStatus = "pending" | "accepted" | "declined" | "started" | "picked-up" | "dropped-off" | "cancelled";
+
+export interface MapRegion {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
 
 export interface Location {
   name?: string; //address name
@@ -30,6 +37,8 @@ export interface Location {
 export interface Ride {
   id?: string;
   userId?: string;
+  name?: string;
+  userRating?: number;
   driverId?: string;
   pickupLocation?: Location;
   destination?: Location;
@@ -44,6 +53,7 @@ export interface Ride {
   driverToPickupDistanceReadable?: string;
   driverToPickupDuration?: number; //seconds
   driverToPickupDurationReadable?: string;
+  estimatedFare?: number; //meters
 }
 
 interface DMElement {
@@ -60,6 +70,7 @@ export interface DistanceMatrix {
 }
 
 export interface Profile {
+  driverId?: string;
   name?: string;
   rating?: number;
 }

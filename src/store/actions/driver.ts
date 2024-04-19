@@ -1,5 +1,5 @@
 import driverSlice, { fetchProfile } from "store/reducers/driverSlice";
 
-const driverActions = driverSlice.actions;
+const driverActions = { ...driverSlice.actions, fetchProfile };
 
-export default { ...driverActions, fetchProfile };
+export default driverActions;
