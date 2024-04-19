@@ -53,5 +53,5 @@ npx expo start --ios
 Or you can download "Expo Go" on GooglePlay or Appstore to run by scanning the QR from this link:
 
 ```
-https://expo.dev/@justinerangel/FinastraCC
+[Expo Go Link](https://expo.dev/preview/update?message=Initial%20build&updateRuntimeVersion=1.0.0&createdAt=2024-04-19T11%3A24%3A53.115Z&slug=exp&projectId=5b4d31d6-a7af-4d97-9c15-78d8dc01dbe2&group=05b3bd4c-0e85-4f04-be29-7da895074658)
 ```
