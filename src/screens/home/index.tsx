@@ -27,6 +27,8 @@ interface HomeScreenProps extends NavigationProps {
   driverRating?: number;
   driverId?: string;
   currentLocation?: Location;
+  rideError?: string;
+  driverError?: string;
   setIsOnline: typeof homeActions.setIsOnline;
   setMapRegion: typeof homeActions.setMapRegion;
   fetchRidesNearMe: any /*typeof homeActions.fetchRidesNearMe*/;
@@ -57,6 +59,17 @@ class HomeScreen extends Component<HomeScreenProps> {
     this.props.fetchProfile();
   }
 
+  componentDidUpdate(prevProps: Readonly<HomeScreenProps>): void {
+    const { rideError, driverError } = this.props;
+
+    if (prevProps.rideError != rideError && rideError) {
+      Toast.show(rideError, { duration: Toast.durations.LONG });
+    }
+    if (prevProps.driverError != driverError && driverError) {
+      Toast.show(driverError, { duration: Toast.durations.LONG });
+    }
+  }
+
   render(): ReactNode {
     const {
       isOnline,
@@ -83,7 +96,7 @@ class HomeScreen extends Component<HomeScreenProps> {
                   destination={selectedRide.pickupLocation}
                   apikey={process.env.EXPO_PUBLIC_GOOGLE_API_KEY as string}
                   strokeWidth={3}
-                  strokeColor="#00D171"
+                  strokeColor="red"
                 />
                 <MapMarker
                   identifier={selectedRide.id}
@@ -212,6 +225,8 @@ const mapStateToProps = (state: RootState) => {
     driverId: driverSelectors.selectDriverId(state),
     currentLocation: driverSelectors.selectCurrentLocation(state),
     driverRating: driverSelectors.selectRating(state),
+    rideError: homeSelectors.selectError(state),
+    driverError: driverSelectors.selectError(state),
   };
 };
 

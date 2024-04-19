@@ -78,4 +78,5 @@ export interface Profile {
 export interface ResponseError {
   status?: number;
   data?: string;
+  url?: string;
 }

@@ -1,18 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "api";
-import { Location, Profile, Ride } from "interfaces";
+import { Location, Profile, ResponseError } from "interfaces";
 
 export const fetchProfile = createAsyncThunk<Profile>("driver/fetchProfile", async () => {
   return await api.fetchProfile();
 });
 
 export interface DriverState {
-  isOnline?: boolean;
   profile?: Profile;
   isProfileLoading?: boolean;
   location?: Location;
   selecteRideId?: string;
-  error?: string | null;
+  error?: string;
 }
 
 const initialState: DriverState = {};
@@ -44,13 +43,22 @@ const driverSlice = createSlice({
     selectSelectedRideId: (state) => {
       return state.selecteRideId;
     },
+    selectError: (state) => {
+      return state.error;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchProfile.pending, (state, action) => {
+    builder.addCase(fetchProfile.pending, (state) => {
+      state.error = undefined;
       state.isProfileLoading = true;
     });
     builder.addCase(fetchProfile.fulfilled, (state, action) => {
-      state.profile = action.payload;
+      if (action.payload.driverId) {
+        state.profile = action.payload;
+      } else {
+        state.profile = undefined;
+        state.error = (action.payload as ResponseError).data;
+      }
       state.isProfileLoading = false;
     });
     builder.addCase(fetchProfile.rejected, (state, action) => {

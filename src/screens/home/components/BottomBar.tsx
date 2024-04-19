@@ -15,7 +15,25 @@ interface BottomBarProps {
   menuActionOnPress?: (action: MenuAction) => void;
 }
 
-class BottomBar extends Component<BottomBarProps> {
+interface BottomBarState {
+  navTranslateY: Animated.Value;
+}
+
+class BottomBar extends Component<BottomBarProps, BottomBarState> {
+  constructor(props: BottomBarProps) {
+    super(props);
+
+    this.state = { navTranslateY: new Animated.Value(0) };
+  }
+
+  componentDidUpdate(prevProps: Readonly<BottomBarProps>): void {
+    const { selectedRide } = this.props;
+
+    if (prevProps.selectedRide != selectedRide) {
+      this.animate();
+    }
+  }
+
   render(): ReactNode {
     const {
       isLoading,
@@ -24,26 +42,42 @@ class BottomBar extends Component<BottomBarProps> {
       onlineOnPress,
       menuActionOnPress,
     } = this.props;
+    const { navTranslateY } = this.state;
 
     return (
       <ViewComponent style={styles.container}>
         {selectedRide && selectedRide.status == "accepted" ? (
-          <Animated.View style={styles.progressContainer}>
+          <ViewComponent style={styles.progressContainer}>
             <RideProgressView
               ride={selectedRide}
               menuActionOnPress={menuActionOnPress}
             />
-          </Animated.View>
-        ) : (
-          <Animated.View style={styles.navContainer}>
-            <OnlineButton isOnline={isOnline} onPress={onlineOnPress} />
-            <LayerButton style={{ position: "absolute", right: 0 }} />
-            <NavigationBar isLoading={isLoading} />
-          </Animated.View>
-        )}
+          </ViewComponent>
+        ) : null}
+        <Animated.View
+          style={{
+            ...styles.navContainer,
+            transform: [{ translateY: navTranslateY }],
+          }}
+        >
+          <OnlineButton isOnline={isOnline} onPress={onlineOnPress} />
+          <LayerButton style={{ position: "absolute", right: 0 }} />
+          <NavigationBar isLoading={isLoading} />
+        </Animated.View>
       </ViewComponent>
     );
   }
+
+  private animate = () => {
+    const { selectedRide } = this.props;
+    const { navTranslateY } = this.state;
+
+    Animated.timing(navTranslateY, {
+      toValue: selectedRide ? 500 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {});
+  };
 }
 
 export { MenuAction };
@@ -58,5 +92,5 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   navContainer: { flex: 1, alignItems: "center", margin: 16 },
-  progressContainer: {},
+  progressContainer: { position: "absolute", left: 0, right: 0, bottom: 0 },
 });

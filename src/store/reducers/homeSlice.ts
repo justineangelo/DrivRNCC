@@ -5,6 +5,9 @@ import { calculateFareFromDistance } from "utils";
 
 export const fetchRidesNearMe = createAsyncThunk<Ride[] | ResponseError, Location>("home/fetchRidesNearMe", async (location, thunkAPI) => {
   const rides = await api.fetchRidesNearMe(location);
+  if (!(rides instanceof Array)) {
+    return rides as ResponseError;
+  }
   const pickupLocations = rides.map((r) => r.pickupLocation!);
   const destinationLocations = rides.map((r) => r.destination!);
   const [driverToPickup, pickupToDestination] = await Promise.all([api.fetchMapsDistanceMatrix([location], pickupLocations), api.fetchMapsDistanceMatrix(pickupLocations, destinationLocations)]);
@@ -85,21 +88,30 @@ const homeSlice = createSlice({
     selectRideById: (state, rideId?: string) => {
       return state.rides?.find((ride) => ride.id == rideId);
     },
+    selectError: (state) => {
+      return state.error;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchRidesNearMe.pending, (state, action) => {
+      state.error = undefined;
       state.isLoading = true;
     });
     builder.addCase(fetchRidesNearMe.fulfilled, (state, action) => {
       if (action.payload instanceof Array) {
         state.rides = action.payload;
       } else {
+        console.log("error: ", action.payload.data, " - ", action.payload.url);
+        state.rides = undefined;
         state.error = action.payload.data;
+        state.isOnline = false;
       }
       state.isLoading = false;
     });
     builder.addCase(fetchRidesNearMe.rejected, (state, action) => {
+      console.log("error: ", action.error);
       state.error = action.error.message;
+      state.isOnline = false;
       state.isLoading = false;
     });
   },
