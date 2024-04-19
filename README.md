@@ -4,6 +4,8 @@ App that is created using React Native with Expo framework
 
 Sample env.sample is provided on the root directory, add .env file with the contents of the env.sample file
 
+To generate Google Maps API key use this [Link](https://developers.google.com/maps/documentation/javascript/get-api-key)
+
 ## Usage
 
 First install expo to build the project
