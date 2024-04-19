@@ -54,4 +54,4 @@ npx expo start --ios
 
 Or you can download "Expo Go" on GooglePlay or Appstore to run by scanning the QR from this link:
 
-[Expo Go Link](https://expo.dev/preview/update?message=fix%20dependencies&updateRuntimeVersion=1.0.0&createdAt=2024-04-19T21%3A19%3A40.674Z&slug=exp&projectId=5b4d31d6-a7af-4d97-9c15-78d8dc01dbe2&group=650c3fed-85f9-4d6f-9aa9-7d0accc5e3a7)
+[Expo Go Link](https://expo.dev/preview/update?message=added%20force%20inset%20top%2C%20remove%20redundant%20props%20set&updateRuntimeVersion=1.0.0&createdAt=2024-04-19T21%3A30%3A18.929Z&slug=exp&projectId=5b4d31d6-a7af-4d97-9c15-78d8dc01dbe2&group=6db5b3a5-619b-4f57-b77b-2152aec26085)
